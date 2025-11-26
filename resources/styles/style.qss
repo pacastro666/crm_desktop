@@ -1,0 +1,140 @@
+/* Estilos principais do sistema CRM */
+
+/* Cores principais */
+* {
+    color: #1f2937;
+}
+
+QMainWindow {
+    background-color: #f9fafb;
+}
+
+/* Botões */
+QPushButton {
+    background-color: #e5e7eb;
+    color: #1f2937;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+QPushButton:hover {
+    background-color: #d1d5db;
+}
+
+QPushButton:pressed {
+    background-color: #9ca3af;
+}
+
+QPushButton:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+}
+
+/* Botão primário */
+QPushButton[class="primary"] {
+    background-color: #2563eb;
+    color: white;
+}
+
+QPushButton[class="primary"]:hover {
+    background-color: #1d4ed8;
+}
+
+/* Botão de perigo */
+QPushButton[class="danger"] {
+    background-color: #ef4444;
+    color: white;
+}
+
+QPushButton[class="danger"]:hover {
+    background-color: #dc2626;
+}
+
+/* Campos de entrada */
+QLineEdit, QTextEdit, QComboBox, QDateEdit, QTimeEdit, QSpinBox, QDoubleSpinBox {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px;
+    selection-background-color: #2563eb;
+}
+
+QLineEdit:focus, QTextEdit:focus, QComboBox:focus {
+    border: 2px solid #2563eb;
+}
+
+/* Tabelas */
+QTableView {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    gridline-color: #e5e7eb;
+    selection-background-color: #dbeafe;
+}
+
+QHeaderView::section {
+    background-color: #f9fafb;
+    padding: 10px;
+    border: none;
+    border-bottom: 2px solid #e5e7eb;
+    font-weight: bold;
+}
+
+/* Cards */
+QFrame[class="card"] {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    padding: 15px;
+}
+
+/* Labels */
+QLabel {
+    color: #1f2937;
+}
+
+QLabel[class="title"] {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+QLabel[class="subtitle"] {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Scrollbars */
+QScrollBar:vertical {
+    background: #f3f4f6;
+    width: 12px;
+    border: none;
+}
+
+QScrollBar::handle:vertical {
+    background: #d1d5db;
+    border-radius: 6px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: #9ca3af;
+}
+
+QScrollBar:horizontal {
+    background: #f3f4f6;
+    height: 12px;
+    border: none;
+}
+
+QScrollBar::handle:horizontal {
+    background: #d1d5db;
+    border-radius: 6px;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background: #9ca3af;
+}
+

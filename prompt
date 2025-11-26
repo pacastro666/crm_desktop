@@ -1,0 +1,636 @@
+Sistema CRM Desktop com PySide6
+Objetivo do Projeto
+Desenvolver um Sistema CRM (Customer Relationship Management) completo para desktop usando PySide6 e SQLite, com interface moderna, organização profissional de código e funcionalidades essenciais para gestão de relacionamento com clientes.
+
+Requisitos Funcionais
+Módulo 1: Gestão de Clientes
+Cadastrar novos clientes com os seguintes campos:
+Nome completo (obrigatório)
+Email (com validação)
+Telefone (com máscara)
+Empresa
+CNPJ/CPF
+Endereço completo (rua, número, bairro, cidade, estado, CEP)
+Observações/Notas
+Data de cadastro (automática)
+Data de última atualização (automática)
+Listar todos os clientes em uma tabela com ordenação por colunas
+Buscar/filtrar clientes por nome, email, empresa ou cidade
+Editar informações de clientes existentes
+Excluir clientes (com confirmação)
+Visualizar detalhes completos do cliente em uma tela dedicada
+Módulo 2: Gestão de Oportunidades/Vendas
+Criar oportunidades de venda vinculadas a clientes
+Campos da oportunidade:
+Título/Descrição
+Cliente associado (seleção via dropdown)
+Etapa do funil: Lead → Qualificação → Proposta → Negociação → Fechado/Ganho ou Perdido
+Valor estimado (R$)
+Probabilidade de fechamento (%)
+Data prevista de fechamento
+Responsável pela oportunidade
+Observações
+Data de criação
+Listar oportunidades com filtros por:
+Etapa do funil
+Cliente
+Período (data)
+Responsável
+Editar e excluir oportunidades
+Mover oportunidades entre etapas (drag-and-drop seria ideal, mas pode ser via dropdown)
+Dashboard com métricas:
+Total de oportunidades por etapa
+Valor total em negociação
+Taxa de conversão
+Módulo 3: Gestão de Tarefas/Follow-up
+Criar tarefas vinculadas a clientes
+Campos da tarefa:
+Descrição
+Cliente associado
+Tipo (Ligação, Email, Reunião, WhatsApp, Visita, Outro)
+Data e hora
+Status (Pendente/Concluída)
+Prioridade (Baixa, Média, Alta)
+Observações
+Listar tarefas com filtros:
+Por data (hoje, esta semana, atrasadas)
+Por cliente
+Por status
+Por prioridade
+Marcar tarefas como concluídas
+Notificações/alertas de tarefas próximas ou atrasadas
+Editar e excluir tarefas
+Módulo 4: Histórico de Interações
+Registrar automaticamente todas as interações:
+Quando um cliente é criado/editado
+Quando uma oportunidade muda de etapa
+Quando uma tarefa é concluída
+Visualizar timeline de interações por cliente
+Adicionar notas/comentários manualmente ao histórico
+Módulo 5: Relatórios e Exportação
+Exportar lista de clientes para CSV/Excel
+Exportar oportunidades para CSV/Excel
+Relatório de vendas por período
+Relatório de tarefas concluídas vs pendentes
+Gráficos simples:
+Oportunidades por etapa (gráfico de barras/pizza)
+Evolução de vendas ao longo do tempo (gráfico de linha)
+Módulo 6: Configurações
+Configurações gerais do sistema:
+Nome da empresa/usuário
+Campos customizáveis (tags, categorias de clientes)
+Backup do banco de dados
+Restaurar backup
+Gerenciamento de usuários (opcional para V1, mas estrutura preparada):
+Login simples
+Níveis de acesso (Admin, Vendedor, Visualizador)
+Requisitos Técnicos
+Tecnologias
+Linguagem: Python 3.10+
+Interface Gráfica: PySide6 (Qt 6)
+Banco de Dados: SQLite3
+Bibliotecas adicionais:
+sqlite3 (nativo)
+datetime (nativo)
+csv (para exportação)
+matplotlib ou QtCharts (para gráficos - opcional)
+bcrypt (para hash de senhas se implementar login)
+Arquitetura do Projeto
+crm_desktop/
+│
+├── main.py                      # Ponto de entrada da aplicação
+│
+├── core/
+│   ├── __init__.py
+│   ├── database.py              # Conexão e inicialização do banco SQLite
+│   ├── settings.py              # Configurações globais (caminhos, constantes)
+│   └── migrations.py            # Scripts de criação/atualização de tabelas
+│
+├── models/
+│   ├── __init__.py
+│   ├── cliente.py               # Classe Cliente (dataclass ou classe simples)
+│   ├── oportunidade.py          # Classe Oportunidade
+│   ├── tarefa.py                # Classe Tarefa
+│   ├── interacao.py             # Classe Interacao (histórico)
+│   └── usuario.py               # Classe Usuario (se implementar login)
+│
+├── repositories/
+│   ├── __init__.py
+│   ├── base_repository.py       # Classe base com operações CRUD genéricas
+│   ├── cliente_repository.py   # CRUD de clientes
+│   ├── oportunidade_repository.py
+│   ├── tarefa_repository.py
+│   └── interacao_repository.py
+│
+├── services/
+│   ├── __init__.py
+│   ├── cliente_service.py       # Regras de negócio para clientes
+│   ├── oportunidade_service.py  # Regras de negócio para oportunidades
+│   ├── tarefa_service.py
+│   ├── relatorio_service.py     # Geração de relatórios
+│   └── export_service.py        # Exportação CSV/Excel
+│
+├── ui/
+│   ├── __init__.py
+│   ├── main_window.py           # QMainWindow principal
+│   │
+│   ├── views/
+│   │   ├── __init__.py
+│   │   ├── clientes_view.py     # Tela de listagem de clientes
+│   │   ├── cliente_form.py      # Formulário de cadastro/edição
+│   │   ├── cliente_detalhes.py  # Tela de detalhes do cliente
+│   │   ├── oportunidades_view.py
+│   │   ├── oportunidade_form.py
+│   │   ├── tarefas_view.py
+│   │   ├── tarefa_form.py
+│   │   ├── dashboard_view.py    # Dashboard com métricas
+│   │   └── configuracoes_view.py
+│   │
+│   ├── widgets/
+│   │   ├── __init__.py
+│   │   ├── search_bar.py        # Widget de busca reutilizável
+│   │   ├── data_table.py        # QTableView customizado
+│   │   ├── form_field.py        # Campos de formulário padronizados
+│   │   └── status_badge.py      # Badge de status (etapa, prioridade)
+│   │
+│   └── dialogs/
+│       ├── __init__.py
+│       ├── confirm_dialog.py    # Diálogo de confirmação
+│       ├── message_dialog.py    # Mensagens de sucesso/erro
+│       └── about_dialog.py      # Sobre o sistema
+│
+├── utils/
+│   ├── __init__.py
+│   ├── validators.py            # Validação de email, CPF, CNPJ, telefone
+│   ├── formatters.py            # Formatação de datas, moeda, telefone
+│   └── helpers.py               # Funções auxiliares gerais
+│
+├── resources/
+│   ├── icons/                   # Ícones da interface
+│   ├── styles/
+│   │   └── style.qss            # Stylesheet Qt para aparência moderna
+│   └── database/
+│       └── crm.db               # Arquivo do banco SQLite (gerado)
+│
+├── tests/                       # Testes unitários (opcional mas recomendado)
+│   ├── __init__.py
+│   ├── test_repositories.py
+│   └── test_services.py
+│
+├── requirements.txt             # Dependências do projeto
+├── README.md                    # Documentação do projeto
+└── .gitignore
+Estrutura do Banco de Dados (SQLite)
+Tabela: clientes
+sql
+Copy
+CREATE TABLE clientes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT,
+    telefone TEXT,
+    empresa TEXT,
+    cnpj_cpf TEXT,
+    endereco_rua TEXT,
+    endereco_numero TEXT,
+    endereco_bairro TEXT,
+    endereco_cidade TEXT,
+    endereco_estado TEXT,
+    endereco_cep TEXT,
+    observacoes TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Tabela: oportunidades
+sql
+Copy
+CREATE TABLE oportunidades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id INTEGER NOT NULL,
+    titulo TEXT NOT NULL,
+    etapa TEXT NOT NULL, -- Lead, Qualificação, Proposta, Negociação, Fechado, Perdido
+    valor REAL DEFAULT 0,
+    probabilidade INTEGER DEFAULT 0, -- 0-100
+    data_prevista_fechamento DATE,
+    responsavel TEXT,
+    observacoes TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+);
+Tabela: tarefas
+sql
+Copy
+CREATE TABLE tarefas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id INTEGER NOT NULL,
+    descricao TEXT NOT NULL,
+    tipo TEXT, -- Ligação, Email, Reunião, WhatsApp, Visita, Outro
+    data_hora TIMESTAMP NOT NULL,
+    status TEXT DEFAULT 'Pendente', -- Pendente, Concluída
+    prioridade TEXT DEFAULT 'Média', -- Baixa, Média, Alta
+    observacoes TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    concluida_em TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+);
+Tabela: interacoes
+sql
+Copy
+CREATE TABLE interacoes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente_id INTEGER NOT NULL,
+    tipo TEXT NOT NULL, -- cliente_criado, cliente_editado, oportunidade_criada, etc
+    descricao TEXT,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
+);
+Tabela: usuarios (opcional para V1)
+sql
+Copy
+CREATE TABLE usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    senha_hash TEXT NOT NULL,
+    nivel_acesso TEXT DEFAULT 'Vendedor', -- Admin, Vendedor, Visualizador
+    ativo INTEGER DEFAULT 1,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Design da Interface (UI/UX)
+Layout Principal
+Janela principal: QMainWindow com 1000x700px (redimensionável)
+Menu lateral esquerdo: 200px de largura fixa
+Ícones + texto para cada módulo
+Itens: Dashboard, Clientes, Oportunidades, Tarefas, Relatórios, Configurações
+Área central: QStackedWidget que troca entre as views
+Barra superior:
+Logo/nome do sistema
+Busca global (busca em clientes, oportunidades)
+Notificações (tarefas atrasadas)
+Perfil do usuário (se implementar login)
+Paleta de Cores Sugerida (moderna e profissional)
+Primária: #2563eb (azul)
+Secundária: #10b981 (verde)
+Alerta: #ef4444 (vermelho)
+Aviso: #f59e0b (laranja)
+Fundo: #f9fafb (cinza claro)
+Texto: #1f2937 (cinza escuro)
+Bordas: #e5e7eb (cinza médio)
+Componentes Visuais
+Tabelas com linhas alternadas (zebra striping)
+Botões com ícones + texto
+Formulários com labels claros e campos bem espaçados
+Cards para métricas no dashboard
+Badges coloridos para status (etapas, prioridades)
+Diálogos modais para confirmações
+Funcionalidades Detalhadas por Tela
+1. Dashboard (Tela Inicial)
+Elementos:
+
+Cards com métricas principais:
+Total de clientes
+Oportunidades abertas
+Valor total em negociação
+Tarefas pendentes hoje
+Gráfico: Oportunidades por etapa (barras horizontais)
+Lista: Próximas tarefas (5 mais próximas)
+Lista: Oportunidades próximas do fechamento
+2. Tela de Clientes
+Layout:
+
+Topo:
+Campo de busca (nome, email, empresa, cidade)
+Botão "Novo Cliente" (destaque, cor primária)
+Botão "Exportar" (CSV)
+Centro:
+QTableView com colunas: ID, Nome, Email, Telefone, Empresa, Cidade, Data Cadastro
+Ordenação clicando nas colunas
+Seleção de linha
+Rodapé:
+Paginação (se muitos registros)
+Total de registros
+Ações por linha:
+Botão "Ver Detalhes"
+Botão "Editar"
+Botão "Excluir" (com confirmação)
+3. Formulário de Cliente (QDialog)
+Campos:
+
+Nome* (QLineEdit)
+Email (QLineEdit com validação)
+Telefone (QLineEdit com máscara)
+Empresa (QLineEdit)
+CNPJ/CPF (QLineEdit com máscara e validação)
+Endereço:
+Rua (QLineEdit)
+Número (QLineEdit)
+Bairro (QLineEdit)
+Cidade (QLineEdit)
+Estado (QComboBox com UFs)
+CEP (QLineEdit com máscara)
+Observações (QTextEdit)
+Botões: "Salvar" e "Cancelar"
+Validações:
+
+Nome obrigatório
+Email válido (regex)
+CPF/CNPJ válido (algoritmo)
+Telefone no formato correto
+4. Detalhes do Cliente
+Layout em abas (QTabWidget):
+
+Aba "Informações": Todos os dados do cliente (modo leitura)
+Aba "Oportunidades": Lista de oportunidades deste cliente
+Aba "Tarefas": Lista de tarefas deste cliente
+Aba "Histórico": Timeline de interações
+Botões: "Editar Cliente", "Nova Oportunidade", "Nova Tarefa"
+5. Tela de Oportunidades
+Layout:
+
+Topo:
+Filtros: Etapa (dropdown), Cliente (autocomplete), Período (date range)
+Botão "Nova Oportunidade"
+Botão "Exportar"
+Centro:
+QTableView com colunas: ID, Título, Cliente, Etapa, Valor, Probabilidade, Data Prevista, Responsável
+Cores diferentes por etapa (badges)
+Ações: Ver, Editar, Excluir, Mover para próxima etapa
+6. Formulário de Oportunidade (QDialog)
+Campos:
+
+Título* (QLineEdit)
+Cliente* (QComboBox com busca/autocomplete)
+Etapa* (QComboBox: Lead, Qualificação, Proposta, Negociação, Fechado, Perdido)
+Valor (QDoubleSpinBox com prefixo R$)
+Probabilidade (QSlider 0-100% ou QSpinBox)
+Data Prevista (QDateEdit)
+Responsável (QLineEdit ou QComboBox se tiver usuários)
+Observações (QTextEdit)
+Botões: "Salvar" e "Cancelar"
+7. Tela de Tarefas
+Layout:
+
+Topo:
+Filtros: Data (Hoje, Esta Semana, Atrasadas, Todas), Cliente, Status, Prioridade
+Botão "Nova Tarefa"
+Centro:
+QTableView com colunas: Checkbox (concluída), Descrição, Cliente, Tipo, Data/Hora, Prioridade, Status
+Cores por prioridade (Alta=vermelho, Média=laranja, Baixa=verde)
+Tarefas atrasadas em destaque
+Ações: Ver, Editar, Excluir, Marcar como concluída
+8. Formulário de Tarefa (QDialog)
+Campos:
+
+Descrição* (QLineEdit)
+Cliente* (QComboBox com busca)
+Tipo* (QComboBox: Ligação, Email, Reunião, WhatsApp, Visita, Outro)
+Data* (QDateEdit)
+Hora* (QTimeEdit)
+Prioridade (QComboBox: Baixa, Média, Alta)
+Observações (QTextEdit)
+Botões: "Salvar" e "Cancelar"
+9. Tela de Relatórios
+Opções:
+
+Relatório de Clientes (filtros + exportar)
+Relatório de Oportunidades por período
+Relatório de Tarefas concluídas vs pendentes
+Gráficos:
+Oportunidades por etapa
+Evolução de vendas (linha do tempo)
+Taxa de conversão
+10. Tela de Configurações
+Seções:
+
+Geral:
+Nome da empresa
+Logo (upload de imagem)
+Backup:
+Botão "Fazer Backup do Banco de Dados"
+Botão "Restaurar Backup"
+Sobre:
+Versão do sistema
+Créditos
+Padrões de Código
+Models (Dataclasses)
+python
+Copy
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+@dataclass
+class Cliente:
+    id: Optional[int] = None
+    nome: str = ""
+    email: str = ""
+    telefone: str = ""
+    empresa: str = ""
+    cnpj_cpf: str = ""
+    endereco_rua: str = ""
+    endereco_numero: str = ""
+    endereco_bairro: str = ""
+    endereco_cidade: str = ""
+    endereco_estado: str = ""
+    endereco_cep: str = ""
+    observacoes: str = ""
+    criado_em: Optional[datetime] = None
+    atualizado_em: Optional[datetime] = None
+Repositories (CRUD)
+python
+Copy
+class ClienteRepository:
+    def __init__(self, db_connection):
+        self.conn = db_connection
+    
+    def criar(self, cliente: Cliente) -> int:
+        # INSERT e retorna o ID
+        pass
+    
+    def buscar_por_id(self, id: int) -> Optional[Cliente]:
+        # SELECT WHERE id
+        pass
+    
+    def listar_todos(self) -> List[Cliente]:
+        # SELECT *
+        pass
+    
+    def buscar(self, termo: str) -> List[Cliente]:
+        # SELECT com LIKE em vários campos
+        pass
+    
+    def atualizar(self, cliente: Cliente) -> bool:
+        # UPDATE
+        pass
+    
+    def excluir(self, id: int) -> bool:
+        # DELETE
+        pass
+Services (Regras de Negócio)
+python
+Copy
+class ClienteService:
+    def __init__(self, cliente_repo, interacao_repo):
+        self.cliente_repo = cliente_repo
+        self.interacao_repo = interacao_repo
+    
+    def criar_cliente(self, cliente: Cliente) -> int:
+        # Validações
+        if not cliente.nome:
+            raise ValueError("Nome é obrigatório")
+        
+        # Criar cliente
+        cliente_id = self.cliente_repo.criar(cliente)
+        
+        # Registrar interação
+        self.interacao_repo.criar(Interacao(
+            cliente_id=cliente_id,
+            tipo="cliente_criado",
+            descricao=f"Cliente {cliente.nome} foi cadastrado"
+        ))
+        
+        return cliente_id
+Views (PySide6)
+python
+Copy
+class ClientesView(QWidget):
+    def __init__(self, cliente_service):
+        super().__init__()
+        self.cliente_service = cliente_service
+        self.setup_ui()
+        self.carregar_dados()
+    
+    def setup_ui(self):
+        # Criar layout, widgets, conectar sinais
+        pass
+    
+    def carregar_dados(self):
+        # Buscar dados do service e popular tabela
+        pass
+    
+    def on_novo_cliente_clicked(self):
+        # Abrir formulário
+        pass
+Validações e Tratamento de Erros
+Validações Necessárias
+Email: Regex para formato válido
+CPF: Algoritmo de validação de dígitos verificadores
+CNPJ: Algoritmo de validação de dígitos verificadores
+Telefone: Formato (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+CEP: Formato XXXXX-XXX
+Campos obrigatórios: Nome do cliente, título da oportunidade, etc.
+Datas: Data prevista não pode ser no passado
+Valores: Valor da oportunidade >= 0
+Tratamento de Erros
+Try/except em todas as operações de banco
+Mensagens amigáveis ao usuário (QMessageBox)
+Log de erros em arquivo (opcional)
+Rollback de transações em caso de erro
+Melhorias Futuras (Roadmap)
+Versão 2.0
+Sistema de login com múltiplos usuários
+Permissões por nível de acesso
+Sincronização com nuvem (API REST)
+Envio de emails direto do sistema
+Integração com WhatsApp Business API
+Importação de clientes via CSV/Excel
+Versão 3.0
+Modo escuro (dark theme)
+Customização de campos por usuário
+Automações (ex: criar tarefa automaticamente ao criar oportunidade)
+Relatórios mais avançados com filtros complexos
+Dashboard personalizável
+App mobile complementar
+Instruções de Desenvolvimento
+Fase 1: Setup Inicial (Semana 1)
+Criar estrutura de pastas
+Configurar ambiente virtual Python
+Instalar PySide6: pip install PySide6
+Criar main.py e MainWindow básica
+Criar database.py com conexão SQLite
+Criar script de migrations para criar tabelas
+Fase 2: Módulo de Clientes (Semana 2-3)
+Criar model Cliente
+Criar ClienteRepository com CRUD completo
+Criar ClienteService com validações
+Criar ClientesView com tabela
+Criar ClienteForm (QDialog) para cadastro/edição
+Implementar busca/filtro
+Implementar exclusão com confirmação
+Criar ClienteDetalhes view
+Fase 3: Módulo de Oportunidades (Semana 4)
+Criar model Oportunidade
+Criar OportunidadeRepository
+Criar OportunidadeService
+Criar OportunidadesView
+Criar OportunidadeForm
+Implementar filtros por etapa
+Vincular oportunidades aos clientes
+Fase 4: Módulo de Tarefas (Semana 5)
+Criar model Tarefa
+Criar TarefaRepository
+Criar TarefaService
+Criar TarefasView
+Criar TarefaForm
+Implementar marcação de concluída
+Implementar alertas de tarefas atrasadas
+Fase 5: Dashboard e Relatórios (Semana 6)
+Criar DashboardView com cards de métricas
+Implementar gráficos básicos
+Criar RelatorioService
+Implementar exportação para CSV
+Criar tela de relatórios
+Fase 6: Polimento e Testes (Semana 7-8)
+Aplicar stylesheet (QSS) para aparência moderna
+Adicionar ícones aos botões e menu
+Implementar sistema de notificações
+Criar tela de configurações
+Implementar backup/restore do banco
+Testes manuais de todos os fluxos
+Correção de bugs
+Documentação (README)
+Fase 7: Empacotamento (Semana 9)
+Testar em ambiente limpo
+Criar requirements.txt
+Empacotar com PyInstaller: pyinstaller --onefile --windowed main.py
+Testar executável
+Criar instalador (opcional: Inno Setup para Windows)
+Comandos Úteis
+Instalação
+bash
+Copy
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+pip install PySide6
+pip freeze > requirements.txt
+Executar
+bash
+Copy
+python main.py
+Empacotar
+bash
+Copy
+pip install pyinstaller
+pyinstaller --onefile --windowed --name="CRM Desktop" main.py
+Critérios de Sucesso
+O projeto será considerado completo quando:
+
+✅ Todos os módulos (Clientes, Oportunidades, Tarefas) estiverem funcionais
+✅ CRUD completo em todas as entidades
+✅ Validações implementadas e funcionando
+✅ Interface responsiva e intuitiva
+✅ Banco de dados persistindo corretamente
+✅ Busca/filtros funcionando
+✅ Exportação para CSV funcionando
+✅ Dashboard com métricas básicas
+✅ Sistema estável sem crashes
+✅ Código organizado seguindo a arquitetura proposta
+✅ Executável gerado e testado
+
+Recursos de Aprendizado Recomendados
+PySide6 Docs: https://doc.qt.io/qtforpython-6/
+SQLite Tutorial: https://www.sqlitetutorial.net/
+Python Dataclasses: https://docs.python.org/3/library/dataclasses.html
+Qt Widgets: https://doc.qt.io/qt-6/qtwidgets-index.html
