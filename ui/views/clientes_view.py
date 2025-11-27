@@ -2,11 +2,14 @@
 View de listagem de clientes
 """
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
-                               QLineEdit, QTableView, QLabel, QHeaderView)
+                               QLineEdit, QTableView, QLabel, QHeaderView, QFileDialog, QDialog)
 from PySide6.QtCore import Qt, QAbstractTableModel
 from services.cliente_service import ClienteService
 from models.cliente import Cliente
 from utils.formatters import Formatters
+from utils.helpers import Helpers
+from ui.views.cliente_form import ClienteForm
+from services.export_service import ExportService
 
 
 class ClientesTableModel(QAbstractTableModel):
@@ -167,26 +170,90 @@ class ClientesView(QWidget):
     
     def on_novo_cliente_clicked(self):
         """Callback para novo cliente"""
-        # Será implementado com o formulário
-        pass
+        form = ClienteForm(self.cliente_service, parent=self)
+        if form.exec() == QDialog.Accepted:
+            self.carregar_dados()  # Recarregar lista
     
     def on_exportar_clicked(self):
         """Callback para exportar"""
-        # Será implementado
-        pass
+        # Obter todos os clientes
+        clientes = self.cliente_service.listar_clientes()
+        
+        if not clientes:
+            Helpers.mostrar_mensagem("Aviso", "Não há clientes para exportar", 'warning', self)
+            return
+        
+        # Solicitar local para salvar
+        arquivo, _ = QFileDialog.getSaveFileName(
+            self,
+            "Exportar Clientes",
+            ExportService.gerar_nome_arquivo_export("clientes"),
+            "CSV Files (*.csv);;All Files (*)"
+        )
+        
+        if arquivo:
+            sucesso = ExportService.exportar_clientes_csv(clientes, arquivo)
+            if sucesso:
+                Helpers.mostrar_mensagem("Sucesso", f"Clientes exportados para:\n{arquivo}", 'info', self)
+            else:
+                Helpers.mostrar_mensagem("Erro", "Erro ao exportar clientes", 'error', self)
+    
+    def _obter_cliente_selecionado(self) -> Cliente:
+        """Obtém o cliente selecionado na tabela"""
+        indexes = self.tabela.selectionModel().selectedRows()
+        if not indexes:
+            return None
+        
+        row = indexes[0].row()
+        model = self.tabela.model()
+        cliente_id = model.data(model.index(row, 0), Qt.DisplayRole)
+        return self.cliente_service.buscar_cliente(cliente_id)
     
     def on_ver_clicked(self):
         """Callback para ver detalhes"""
-        # Será implementado
-        pass
+        cliente = self._obter_cliente_selecionado()
+        if not cliente:
+            Helpers.mostrar_mensagem("Aviso", "Selecione um cliente", 'warning', self)
+            return
+        
+        # Por enquanto, abre o formulário em modo visualização
+        # TODO: Criar tela de detalhes completa
+        form = ClienteForm(self.cliente_service, cliente, parent=self)
+        form.setWindowTitle(f"Detalhes - {cliente.nome}")
+        # Desabilitar edição (pode ser implementado depois)
+        form.exec()
     
     def on_editar_clicked(self):
         """Callback para editar"""
-        # Será implementado
-        pass
+        cliente = self._obter_cliente_selecionado()
+        if not cliente:
+            Helpers.mostrar_mensagem("Aviso", "Selecione um cliente para editar", 'warning', self)
+            return
+        
+        form = ClienteForm(self.cliente_service, cliente, parent=self)
+        if form.exec() == QDialog.Accepted:
+            self.carregar_dados()  # Recarregar lista
     
     def on_excluir_clicked(self):
         """Callback para excluir"""
-        # Será implementado
-        pass
+        cliente = self._obter_cliente_selecionado()
+        if not cliente:
+            Helpers.mostrar_mensagem("Aviso", "Selecione um cliente para excluir", 'warning', self)
+            return
+        
+        # Confirmar exclusão
+        if Helpers.confirmar_acao(
+            "Confirmar Exclusão",
+            f"Tem certeza que deseja excluir o cliente '{cliente.nome}'?\n\nEsta ação não pode ser desfeita.",
+            self
+        ):
+            try:
+                sucesso = self.cliente_service.excluir_cliente(cliente.id)
+                if sucesso:
+                    Helpers.mostrar_mensagem("Sucesso", "Cliente excluído com sucesso", 'info', self)
+                    self.carregar_dados()  # Recarregar lista
+                else:
+                    Helpers.mostrar_mensagem("Erro", "Erro ao excluir cliente", 'error', self)
+            except Exception as e:
+                Helpers.mostrar_mensagem("Erro", f"Erro ao excluir: {str(e)}", 'error', self)
 
