@@ -105,7 +105,12 @@ def main():
     window = MainWindow()
     
     # Criar e adicionar views
-    dashboard_view = DashboardView(services['relatorio_service'])
+    dashboard_view = DashboardView(
+        services['relatorio_service'],
+        services['tarefa_service'],
+        services['oportunidade_service'],
+        services['cliente_service']
+    )
     clientes_view = ClientesView(services['cliente_service'])
     oportunidades_view = OportunidadesView(services['oportunidade_service'], services['cliente_service'])
     tarefas_view = TarefasView(services['tarefa_service'], services['cliente_service'])
