@@ -32,6 +32,8 @@ from services.relatorio_service import RelatorioService
 from ui.main_window import MainWindow
 from ui.views.dashboard_view import DashboardView
 from ui.views.clientes_view import ClientesView
+from ui.views.oportunidades_view import OportunidadesView
+from ui.views.tarefas_view import TarefasView
 
 
 def inicializar_banco():
@@ -105,13 +107,19 @@ def main():
     # Criar e adicionar views
     dashboard_view = DashboardView(services['relatorio_service'])
     clientes_view = ClientesView(services['cliente_service'])
+    oportunidades_view = OportunidadesView(services['oportunidade_service'], services['cliente_service'])
+    tarefas_view = TarefasView(services['tarefa_service'], services['cliente_service'])
     
     window.adicionar_view(dashboard_view, "Dashboard")
     window.adicionar_view(clientes_view, "Clientes")
+    window.adicionar_view(oportunidades_view, "Oportunidades")
+    window.adicionar_view(tarefas_view, "Tarefas")
     
     # Conectar botões do menu
     window.btn_dashboard.clicked.connect(lambda: window.mostrar_view(0))
     window.btn_clientes.clicked.connect(lambda: window.mostrar_view(1))
+    window.btn_oportunidades.clicked.connect(lambda: window.mostrar_view(2))
+    window.btn_tarefas.clicked.connect(lambda: window.mostrar_view(3))
     
     # Mostrar janela
     window.show()
